@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src ="./lib/vue.js"></script>
+</head>
+<body>
+    <div id = "app1">
+        <!--对象就是无序键值对的集合，如果key中没有特殊字符可以省略单引号-->
+        <!--<h1 :style="{color:'red','font-style':'italic'}">这是一个H1</h1>-->
+        <!-- <h1 :style="styleobj1">这是一个H1</h1> -->
+        <h1 :style=[styleobj1,styleobj2]>这是一个H1</h1>
+    </div>
+    <script>
+        var vm = new Vue({
+            el:'#app1',
+            data:{
+                styleobj1:{color:'red','font-style':'italic'},
+                styleobj2:{'font-weight': 200}
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./lib/vue.js"></script>
+    <style>
+        [v-cloak]{
+            display:none;
+        }
+
+    </style>
+</head>
+<body>
+    <div id = "app">
+        <!--使用v-cloak解决，插值表达式闪烁的问题，使用插值表达式可以任意拼接字符-->
+        <p v-cloak>++++{{msg}}---------</p>
+        <!--使用v-text解决，插值问题,默认v-text是没有插值表达式闪烁的问题，====被覆盖-->
+        <p v-text="msg">==========</p>
+        <div v-html = "msg1"></div>
+        <!--v-bind 是vue中提供的用于绑定属性的指令-->
+        <input type = "button" value="按钮" v-bind:title= "mytitle+'12345'" v-on:click="show1">
+        <input type = "button" value="按钮1" v-bind:title= "mytitle+'12345'" v-on:mouseover="show">
+    </div>
+   
+    <script>
+        var vm = new Vue({
+            el:'#app',
+            data:{
+                msg:"hello vue",
+                msg1:"<h1>我是H1</h1>",
+                mytitle:"自定义title"
+            },
+            methods:{
+                show:function(){
+                    alert(123);
+                },
+                show1:function(){
+                    alert(456);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./lib/vue.js"></script>
+    <style>
+        .inner{
+            height: 150px;
+            background-color: red;
+        }
+        .inner2{
+            height: 150px;
+            background-color: red;
+        }
+        .inner3{
+            height: 150px;
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id = "app">
+        <div class ="inner" @click = "divhandler">
+            <!--使用 .stop 阻止冒泡-->
+            <input type="button" value = "按钮" @click.stop = "btnhandler">
+        </div>
+
+        <!--使用 。prevent阻止默认行为，例如超链接的跳转-->
+        <!--使用 .once 只触发一次事件处理函数-->
+        <a href = "http://www.baidu.com" @click.prevent.once = "aclick">去百度</a>
+
+        <!--默认是冒泡机制，先里面按钮，后外面div，使用.capture,进行捕获，先div在按钮-->
+        <div class ="inner2" @click.capture = "divhandler">
+            <!--使用 .stop 阻止冒泡-->
+            <input type="button" value = "按钮" @click = "btnhandler">
+        </div>
+
+        <!--使用.self 实现只有点击当前元素的时候，才会触发事件处理函数-->
+        <div class ="inner3" @click.self = "divhandler">
+            <!--使用 .stop 阻止冒泡-->
+            <input type="button" value = "按钮" @click = "btnhandler">
+        </div>
+      
+    </div>
+
+    <script>
+        var vm = new Vue({
+            el:'#app',
+            data:{},
+            methods:{
+                divhandler(){
+                    console.log("这是div的事件");
+                },
+                btnhandler(){
+                    console.log("这是btn的事件");
+                },
+                aclick(){
+                    console.log("点击了超链接");
+                }
+            }
+        });
+    </script>
+</body>
+</html>

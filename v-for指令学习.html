@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src ="./lib/vue.js"></script>
+</head>
+<body>
+    <div id = "app1">
+        <p v-for="item in list">{{item}}</p>
+        <p v-for="(user,i) in list1">id:{{user.id}}--名字：{{user.name}} ---索引：{{i}}</p>
+        <!-- value在前，key在后 -->
+        <p v-for="(val,key,i) in user1">{{val}}---{{key}}---{{i}}</p>
+        <!-- 迭代数字从1开始 -->
+        <p v-for="count in 10">这是{{count}}次循环</p>
+    </div>
+    <script>
+        var vm = new Vue({
+            el:'#app1',
+            data:{
+                list:[1,2,3,4],
+                list1:[
+                    {'id':1,'name':'liuzp1'},
+                    {'id':2,'name':'liuzp2'},
+                    {'id':3,'name':'liuzp3'},
+                    {'id':4,'name':'liuzp4'},
+                ],
+                user1:{
+                    id:1,
+                    name:'lzp',
+                    gender:'男'
+                }
+            }
+        });
+    </script>
+</body>
+</html>
