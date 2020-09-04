@@ -13,7 +13,7 @@
         
         <div class="panel panel-primary">
               <div class="panel-heading">
-                    <h3 class="panel-title">添加品牌</h3>
+                    <h3 class="panel-title" v-color="'green'">添加品牌</h3>
               </div>
               <div class="panel-body form-inline">
                     <label>
@@ -32,7 +32,7 @@
                     <input type="button" value="添加2" class ="btn btn-primary" @click="add2">
                     <label>
                         <!--在vue中，所有的指令在调用的时候都以 v-开头 -->
-                        搜索关键字:<input type="text"class ="form-control" v-model="keywords" v-focus>
+                        搜索关键字:<input type="text"class ="form-control" v-model="keywords" v-focus v-color="'blue'">
                     </label>
               </div>
         </div>
@@ -74,6 +74,7 @@
 
     <div id = "app2">
         {{msg|dateFormat}}
+        <p v-fontweight="1000" v-fontsize="'30px'">测试私有指令</p>
     </div>
     <script>
 
@@ -100,16 +101,32 @@
         //参数2 ：是一个对象，在这个对象身上，有一些指令相关的函数，这些函数可以在特定的阶段，执行相关操作
         Vue.directive("focus",{
             //在每个函数中第一个参数永远是el，表示被绑定了指令的那个元素，这个el参数，是一个原生js dom对象
+            //在内存中调用
             bind:function(el){
                 //每当指令绑定到元素上的时候，会立即执行这个bind函数，只执行一次。
+                //一般和样式相关的操作，都可以在bind中执行
             },
+            //在页面上调用
             inserted:function(el){
                 //表示元素插入到DOM中的时候，会执行inserted函数，只执行一次
+                //和js行为有关的操作，最好是在inserted中进行，防止js行为不生效
                 el.focus();
             },
             updated:function(){
                 //当vnode更新的时候，会执行update函数，可能会执行多次
             }
+        })
+
+        //自定义一个设置字体颜色的指令
+        Vue.directive("color",{
+            //样式只要通过指令绑定了元素，不管这个元素有没有被插入到页面中去，这个元素肯定有了一个内联的样式
+            //将来这个元素肯定会显示到页面中，这时候，浏览器的渲染引擎必然会解析样式，应用给这个元素
+            bind:function(el,binding){
+                console.log(binding.name);
+                //el.style.color = 'red';
+                el.style.color = binding.value;
+            }
+
         })
 
         //自定义全局按键修饰符
@@ -170,18 +187,32 @@
             }
         });
 
-        //定义一个私有过滤器
+        
         var vm2 = new  Vue({
             el:"#app2",
             data:{
                 msg:new Date()
             },
+            //定义一个私有过滤器
             filters:{
                 //过滤器的调用原则为就近原则，在全局和私有都有同一个过滤器名的情况下，优先调用近的，私有的
                 dateFormat:function(dateStr){
                     return "私有过滤器";
                 }
+            },
+            //定义一个私有的指令
+            directives:{
+                fontweight:{
+                    bind:function(el,binding){
+                        el.style.fontWeight=binding.value;
+                    }
+                },
+                //注意此写法等同于把代码写到了bind和update中去
+                fontsize:function(el,binding){
+                    el.style.fontSize=binding.value;
+                }
             }
+
         })
         
     </script>
