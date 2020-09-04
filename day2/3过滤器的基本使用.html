@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src = "../lib/vue.js"></script>
+</head>
+<body>
+    <div id ="app">
+        <!--可以多个过滤器联合调用，通过管道符连接，执行完一个再执行下一个-->
+        <p>{{msg|msgope('a','b')|test}}</p>
+    </div>
+    <script>
+        //过滤器写在vue实例前面，否则会报 Failed to resolve filter: msgope
+        //过滤器调用的时候可以传参，filter函数第一个参数已经写死了，是|前面的数据，filter（参数），可以作为第二参数
+        Vue.filter("msgope",function(data,param,param2){
+            return data + param+param2;
+        })
+
+        Vue.filter("test",function(data){
+            return data + "====";
+        })
+
+        var vm = new Vue({
+            el:"#app",
+            data:{
+                msg:"测试信息"
+            }
+        })
+
+       
+    </script>
+    
+</body>
+</html>
