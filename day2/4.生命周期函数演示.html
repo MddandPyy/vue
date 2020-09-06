@@ -8,6 +8,7 @@
 </head>
 <body>
     <div id ="app">
+        <input type="button" value="改变" @click="alter">
         <h3 id ="h3">{{msg}}</h3>
     </div>
     <Script>
@@ -19,6 +20,9 @@
             methods:{
                show(){
                    console.log("执行了show方法")
+               },
+               alter(){
+                   this.msg = 'no'
                }
             },
 
@@ -54,7 +58,18 @@
 
             // 二、运行期间的生命周期函数
 
-            
+            beforeUpdate(){
+                //这时页面还没有被刷新，但是数据已经被更新了
+                //console.log(document.getElementById('h3').innerText);
+                //msg被按钮事件修改成no，数据发生变化，触发了此方法，但是页面上还是显示原来的msg值OK.
+                //页面上的数据还是旧的，data数据是最新的
+            },
+            updated(){
+                //console.log(document.getElementById('h3').innerText);
+                //msg被按钮事件修改成no，数据发生变化，触发了此方法
+                //此时页面上的数据和data数据都是最新的
+            }
+
         })
     </Script>
     

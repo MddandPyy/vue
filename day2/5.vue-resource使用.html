@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src = "../lib/vue.js"></script>
+    <!--vue-resource 依赖于vue，所以引用的先后顺序不能变-->
+    <script src = "../lib/vue-resource.js"></script>
+</head>
+<body>
+    <div id ="app">
+        <input type="button" value="获取用户" @Click="getUser">
+        <input type="button" value="获取用户列表" @Click="getUserList">
+        <input type="button" value="添加用户" @Click="addUser">
+    </div>
+    <script>
+        var vm = new Vue({
+            el:"#app",
+            data:{},
+            methods:{
+                getUser(){
+                    this.$http.get('http://localhost:8080/user').then(function(result){
+                        console.log(result.body);
+                    })
+                },
+                getUserList(){
+                    this.$http.get('http://localhost:8080/userList').then(result=>{
+                        console.log(result.body);
+                    })
+                },
+                addUser(){
+                    Vue.http.options.emulateJSON = true;
+                    this.$http.post('http://localhost:8080/user',{"name":"lzp","age":20}).then(function(result){
+                        console.log(result)
+                    });
+                }
+            }
+        })
+    </script>
+    
+</body>
+</html>
