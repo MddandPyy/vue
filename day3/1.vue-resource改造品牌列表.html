@@ -4,18 +4,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src ="../lib/vue.js"></script>
-    <script src="../lib/vue-resource.js"></script>
+    <script src = "../lib/vue.js"></script>
+    <!-- <script src="../lib/vue-resource.js"></script> -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href = "../lib/bootstrap.css">
 </head>
 <body>
+    <div id = "app">
 
-    <div id = "app"></div>
+        
+        <div class="panel panel-primary">
+              <div class="panel-heading">
+                    <h3 class="panel-title" v-color="'green'">添加品牌</h3>
+              </div>
+              <div class="panel-body form-inline">
+                    <label>
+                        Id:<input type="text" class ="form-control" v-model="id">
+                    </label>
+                    <label>
+                        <!--Vue提供了一些，内置的按键修饰符-->
+                        <!-- Name:<input type="text"class ="form-control" v-model="name" @keyup.enter="add2"> -->
+                        <!--可以使用按键对应的键盘码 keyCode 来自定义按键触发  113=F2-->
+                        <!-- Name:<input type="text"class ="form-control" v-model="name" @keyup.113="add2"> -->
+                        Name:<input type="text"class ="form-control" v-model="name" @keyup.lzpf2="add2">
+                    </label>
+                    <label>
+                        age:<input type="text" class ="form-control" v-model="age">
+                    </label>
+
+                    <!-- 在vue中，使用事件绑定机制，为元素指定处理函数的时候，如果加了小括号，就可以给函数传参了 -->
+                    <input type="button" value="添加" class ="btn btn-primary" @click="add2">
+                    <label>
+                        <!--在vue中，所有的指令在调用的时候都以 v-开头 -->
+                        搜索关键字:<input type="text"class ="form-control" v-model="keywords" v-focus v-color="'blue'">
+                    </label>
+              </div>
+        </div>
+        
+       
+       <table class="table table-bordered table-hover table-striped">
+           <thead>
+               <tr>
+                   <th>id</th>
+                   <th>name</th>
+                   <th>age</th>
+                   <th>time</th>
+                   <th>operation</th>
+
+               </tr>
+           </thead>
+           <tbody>
+               <!-- <tr v-for="item in list" :key="item.id">
+                   <td>{{item.id}}</td>
+                   <td v-text="item.name"></td>
+                   <td>{{item.ctime}}</td>
+                   <td>
+                    <a href="" @click.prevent = "del(item.id)">删除</a>
+                   </td>
+               </tr> -->
+
+               <tr v-for="item in search(keywords)" :key="item.id">
+                <td>{{item.id}}</td>
+                <td v-text="item.name"></td>
+                <td v-text="item.age"></td>
+                <td>{{item.time|dateFormat}}</td>
+                <td>
+                 <a href="" @click.prevent = "del(item.id)">删除</a>
+                </td>
+            </tr>
+           </tbody>
+       </table>
+       
+    </div>
+
+
     <script>
+
+        //全局过滤器，所有的Vue实例都可以使用
+        //过滤器的调用格式 {{name|nameope}}
+        //过滤器的定义语法
+        //Vue.filter('过滤器名称',function(){})
+        //过滤器中的function，第一个参数已经被规定死了，永远都是 过滤器 管道符前面传递过来的数据
+        // Vue.filter('过滤器名称',function(data){
+        //     return data+123;
+        // })
+
+        Vue.filter("dateFormat",function(dateStr){
+            var date = new Date(dateStr);
+            var y = date.getFullYear();
+            var m = (date.getMonth()+1).toString().padStart(2,'0');
+            var d = date.getDate().toString().padStart(2,'0');
+            return `${y}-${m}-${d}`;
+        })
+
+        //在vue中，所有的指令在调用的时候都以 v-开头 
+        //使用 Vue.directive 定义全局指令
+        //参数1 ：指令的名称 ，注意在定义的时候，指令前面不需要加v-前缀，在调用的时候需要添加v-
+        //参数2 ：是一个对象，在这个对象身上，有一些指令相关的函数，这些函数可以在特定的阶段，执行相关操作
+        Vue.directive("focus",{
+            //在每个函数中第一个参数永远是el，表示被绑定了指令的那个元素，这个el参数，是一个原生js dom对象
+            //在内存中调用
+            bind:function(el){
+                //每当指令绑定到元素上的时候，会立即执行这个bind函数，只执行一次。
+                //一般和样式相关的操作，都可以在bind中执行
+            },
+            //在页面上调用
+            inserted:function(el){
+                //表示元素插入到DOM中的时候，会执行inserted函数，只执行一次
+                //和js行为有关的操作，最好是在inserted中进行，防止js行为不生效
+                el.focus();
+            },
+            updated:function(){
+                //当vnode更新的时候，会执行update函数，可能会执行多次
+            }
+        })
+
+        //自定义一个设置字体颜色的指令
+        Vue.directive("color",{
+            //样式只要通过指令绑定了元素，不管这个元素有没有被插入到页面中去，这个元素肯定有了一个内联的样式
+            //将来这个元素肯定会显示到页面中，这时候，浏览器的渲染引擎必然会解析样式，应用给这个元素
+            bind:function(el,binding){
+                console.log(binding.name);
+                //el.style.color = 'red';
+                el.style.color = binding.value;
+            }
+
+        })
+
+        //自定义全局按键修饰符
+        Vue.config.keyCodes.lzpf2 = 113
+
         var vm = new Vue({
             el:"#app",
-            data:{}
-        })
+            data:{
+                id:'',
+                name:'',
+                keywords:'',
+                age:0,
+                list:[]
+            },
+            methods:{
+                add2(){
+                    axios({
+                        url: 'http://localhost:8080/user',
+                        method: 'post',
+                        data: {'id':this.id,'name':this.name,'age':this.age,'time':new Date()}
+                        }).then(res => {
+                            this.getUserList();
+                        });
+
+                   
+                },
+                del(id){
+                    var index = this.list.findIndex(item=>{
+                        if(item.id==id){
+                            // var itemstr = JSON.stringify(item);
+                            // console.log(itemstr);
+                            // Vue.http.options.emulateJSON = true;
+                            // this.$http.post('http://localhost:8080/delete',itemstr).then(function(result){
+                            //     console.log(result);
+                            //     this.getUserList();
+                            // });
+                            //var itemstr = JSON.stringify(item);
+                            axios({
+                                url: 'http://localhost:8080/delete',
+                                method: 'post',
+                                data: item
+                                }).then(res => {
+                                    this.getUserList();
+                                });
+
+                        }
+                    })
+                    
+                },
+                search(keywords){
+                    return this.list.filter(item=>{
+                        if(item.name.includes(keywords)){
+                            return item;
+                        }
+                    })
+                },
+                getUserList(){
+                    // this.$http.get('http://localhost:8080/userList').then(result=>{
+                    //     this.list = JSON.parse(result.body);
+                    // })
+
+                    axios
+                        .get('http://localhost:8080/userList',{})
+                        .then(result=>{
+                            this.list = result.data;
+                            })
+                        .catch((e) => {
+                            console.log('获取数据失败');
+                        });
+                },
+               
+            },
+            created(){
+                console.log("create");
+                this.getUserList();
+            }
+        });
+        
     </script>
-    
 </body>
 </html>
+
